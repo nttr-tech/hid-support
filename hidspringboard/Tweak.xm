@@ -534,7 +534,7 @@ static void postKeyEventNew(Boolean down, uint16_t modifier, unichar unicode) {
 }
 
 static void postKeyEvent(int down, uint16_t modifier, unichar unicode){
-    if(Level_ >= 5){
+    if(Level_ >= 5 && (0x00 <= unicode && unicode <= 0x7F)){
         // NSLog(@"Run postLeyEventNew(), key == %x", unicode);
         Boolean isDown = down ? YES : NO;
         return postKeyEventNew(isDown, modifier, unicode);
