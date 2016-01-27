@@ -410,20 +410,16 @@ static void postMouseEventIOHID(float x, float y, int click){
     IOHIDFloat xf = x / screen_width;
     IOHIDFloat yf = y / screen_height;
 
-    // IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator, uint64_t timeStamp,
-    //                                                    uint32_t index, uint32_t identity, uint32_t eventMask,
-    //                                                    IOHIDFloat x, IOHIDFloat y, IOHIDFloat z, IOHIDFloat tipPressure, IOHIDFloat twist,
-    //                                                    Boolean range, Boolean touch, IOOptionBits options);
     IOHIDEventRef parent = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, mach_absolute_time(), kIOHIDDigitizerTransducerTypeHand, 1<<22, 1, parent_flags, 0, xf, yf, 0, 0, 0, 0, 0, 0);
-//    IOHIDEventRef parent = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, mach_absolute_time(), kIOHIDDigitizerTransducerTypeHand, 1<<22, 1, parent_flags, 0, xf, yf, 0.95, 0.95, 0.95, 1, 1, 0);
     IOHIDEventSetIntegerValue(parent, kIOHIDEventFieldIsBuiltIn, true);
     IOHIDEventSetIntegerValue(parent, kIOHIDEventFieldDigitizerIsDisplayIntegrated, true);
     if ($IOHIDEventSetSenderID){
         // not in SDK 5.1 ARMv6 slice of IOKIT
+        ($IOHIDEventSetSenderID)(parent, 0x8000000817319375);
+    } else {
         ($IOHIDEventSetSenderID)(parent, 0x0123456789ABCDEF);
     }
     IOHIDEventRef child = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), 3, 2, child_flags, xf, yf, 0, 0, 0, click, click, 0);
-//    IOHIDEventRef child = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), 3, 2, child_flags, xf, yf, 0.95, 0.95, 0, click, click, 0);
     IOHIDEventAppendEvent(parent, child);
     CFRelease(child);
     
